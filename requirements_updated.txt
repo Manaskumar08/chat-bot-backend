@@ -1,0 +1,64 @@
+# ==================== Core Web Framework ====================
+fastapi==0.136.3
+uvicorn[standard]==0.32.1
+python-multipart==0.0.7
+
+# ==================== Database ====================
+sqlalchemy==2.1.0
+psycopg2-binary==2.9.12
+alembic==1.18.4
+
+# ==================== Data Validation ====================
+pydantic==2.10.6
+pydantic-settings==2.6.3
+email-validator==2.3.1
+
+# ==================== Authentication & Security ====================
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==5.0.0
+
+# ==================== AI/ML ====================
+groq==1.4.0
+faster-whisper==1.2.1
+piper-tts==1.2.0
+ctranslate2==4.7.2
+
+# ==================== Audio Processing ====================
+soundfile==0.12.1
+librosa==0.11.0
+numpy==1.26.4
+scipy==1.15.0
+pydub==0.25.1
+av==17.0.1
+
+# ==================== Environment & Utilities ====================
+python-dotenv==1.0.0
+requests==2.31.0
+httpx==0.28.1
+
+# ==================== WebSocket ====================
+websockets==14.1
+aiofiles==24.1.0
+
+# ==================== Async ====================
+asyncpg==0.31.0
+anyio==4.13.0
+
+# ==================== Logging & Monitoring ====================
+colorama==0.4.6
+
+# ==================== Development ====================
+# Uncomment for development
+# pytest==7.4.4
+# pytest-asyncio==0.23.2
+# black==24.1.1
+# flake8==7.0.0
+# mypy==1.8.0
+
+# ==================== Optional: Google APIs ====================
+# google-cloud-speech==2.25.0
+# google-cloud-texttospeech==2.15.0
+
+# ==================== Optional: Database Admin ====================
+# pgadmin4==8.0
