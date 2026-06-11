@@ -3,14 +3,37 @@ Configuration Management
 Environment variables and settings for Voice Agent application
 """
 
-from pydantic_settings import BaseSettings
-from typing import Optional
 from functools import lru_cache
+from pathlib import Path
+from typing import Optional
+
 import os
 from dotenv import load_dotenv
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
 
 # Load environment variables from .env file
 load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _parse_bool(value, default: bool) -> bool:
+    if value is None:
+        return default
+
+    if isinstance(value, bool):
+        return value
+
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "y", "on", "debug"}:
+            return True
+        if normalized in {"0", "false", "no", "n", "off", "release", "prod", "production"}:
+            return False
+        return default
+
+    return bool(value)
 
 
 class Settings(BaseSettings):
@@ -19,14 +42,14 @@ class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Voice Agent API"
     APP_VERSION: str = "1.0.0"
-    DEBUG: bool = os.getenv("DEBUG", "True").lower() == "true"
+    DEBUG: bool = True
     
     # Database
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
         "postgresql://postgres:Manas%40801@localhost:5432/voice_agent"
     )
-    DB_ECHO: bool = os.getenv("DB_ECHO", "False").lower() == "true"
+    DB_ECHO: bool = False
     
     # JWT & Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
@@ -36,10 +59,13 @@ class Settings(BaseSettings):
     # Groq API
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "mixtral-8x7b-32768")
+
+    # Gemini API
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     
     # Piper TTS
-    PIPER_EXE: str = os.getenv("PIPER_EXE", r"C:\piper\piper.exe")
-    PIPER_MODEL: str = os.getenv("PIPER_MODEL", r"C:\piper\models\en_US-lessac-medium.onnx")
+    PIPER_EXE: str = os.getenv("PIPER_EXE", str(BASE_DIR.parent / "piper" / "piper.exe"))
+    PIPER_MODEL: str = os.getenv("PIPER_MODEL", str(BASE_DIR / "voices" / "en_US-lessac-medium.onnx"))
     
     # Faster Whisper STT
     WHISPER_MODEL: str = os.getenv("WHISPER_MODEL", "base")
@@ -55,6 +81,16 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def parse_debug(cls, value):
+        return _parse_bool(value, default=True)
+
+    @field_validator("DB_ECHO", mode="before")
+    @classmethod
+    def parse_db_echo(cls, value):
+        return _parse_bool(value, default=False)
 
 
 # Database configuration dictionary
